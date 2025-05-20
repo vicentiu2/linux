@@ -19,7 +19,6 @@ artifacts_structure() {
 	for index in "${!typeBCM[@]}"; do
 		cd adi_"${typeBCM[$index]}"_defconfig
 		mkdir overlays modules
-		mv ./*.dtbo ./overlays
 		tar -xf rpi_modules.tar.gz -C modules
 		rm rpi_modules.tar.gz
 		mv ./zImage ./"${typeKERNEL[$index]}".img
@@ -44,6 +43,7 @@ artifacts_swdownloads() {
 	artifacts_structure
 	cd ${SOURCE_DIRECTORY}/${timestamp} || exit 1
 	chmod 600 ${KEY_FILE}
+	BUILD_SOURCEBRANCHNAME="rpi-6.6.y"
 	scp -2 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o HostKeyAlgorithms=+ssh-dss \
 		-i ${KEY_FILE} -r *.tar.gz ${DEST_SERVER}/${BUILD_SOURCEBRANCHNAME}
 	md5_modules=($(md5sum rpi_modules.tar.gz| cut -d ' ' -f 1))
